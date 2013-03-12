@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Splitter Demo</title>
+  <style>
+    body {
+      color: #333;
+      font-family: "Helvetica Neue";
+      font-size: 14px;
+      line-height: 21px;
+    }
+
+
+    body {
+      background: #333;
+      -webkit-user-select: none;
+    }
+    body.dragging {
+      cursor: ew-resize;
+    }
+    .app {
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      position: absolute;
+      overflow: hidden;
+    }
+    .panel {
+      background: #ddd;
+      position: absolute;
+      width: 50%;
+      top: 0;
+      bottom: 0;
+      overflow: hidden;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    #left {
+      left: 0;
+      z-index: 1;
+      width: 200px;
+      /*background: blue;*/
+    }
+    #center {
+      left: 200px;
+      width: 300px;
+      /*background: red;*/
+    }
+    #right {
+      left: 500px;
+      width: 100%;
+      /*background: green;*/
+    }
+    .splitter {
+      background: transparent;
+      border-left: 1px solid #666;
+      box-shadow: -1px -0 0 #fff;
+      width: 5px;
+      position: absolute;
+
+      top: 0;
+      bottom: 0;
+      cursor: ew-resize;
+      z-index: 2;
+    }
+    .split-left {
+      left: 200px;
+    }
+    .split-right {
+      left: 500px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="parent" class="app">
+      <div id="left" class="panel">
+        Min: 100px <br>
+        Max: 300px
+      </div>
+      <div id="center" class="panel">
+        Min: 100px <br>
+        Max: 400px
+      </div>
+      <div id="right" class="panel">
+        Min: 200px <br>
+        Max: infinite
+      </div>
+    </div>
+  </div>
+  <script src="./splitter.js"></script>
+</body>
+</html>
