@@ -1,0 +1,13 @@
+{
+  "name": "Panel Splitter",
+  "main": "index.html",
+  "description": "Simple resizable panels for Node-Webkit",
+  "version": "0.1.0",
+  "window": {
+    "toolbar": true,
+    "width": 800,
+    "height": 600,
+    "position": "mouse",
+    "frame": true
+  }
+}

@@ -1,8 +1,6 @@
 (function() {
   
   // Variables
-  var Doc = document;
-  var body = Doc.body;
   var parent;
   var panels = {};
   var splitters = {};
@@ -10,6 +8,24 @@
   var width = 0;
   var active = false;
   var offset = {};
+  
+  
+  // Node-webkit
+  if (typeof(require) !== "undefined") {
+    console.log(global);
+    var gui = global.gui;
+    var window = gui.Window.get();
+  }
+  
+  // If used in Node-Webkit, set `global.document = document` in the main js file.
+  var Doc;
+  if (typeof(document) !== "undefined") {
+    Doc = global.document;
+  }
+  else {
+    Doc = document;
+  }
+  var body = Doc.body;
   
   
   // Needs to be updated when page is resized.
@@ -122,8 +138,8 @@
     // Add splitters to DOM
     splitters.left.el.className = "splitter split-left";
     splitters.right.el.className = "splitter split-right";
-    left.insertAdjacentElement('afterend', splitters.left.el);
-    center.insertAdjacentElement('afterend', splitters.right.el);
+    panels.left.el.insertAdjacentElement('afterend', splitters.left.el);
+    panels.center.el.insertAdjacentElement('afterend', splitters.right.el);
   
     // Get initial position from CSS
     splitters.left.pos = splitters.left.el.offsetLeft;
@@ -159,33 +175,3 @@
   }
 
 }());
-
-var $ = function(id) {
-  return document.getElementById(id);
-};
-
-Splitter({
-  
-  parent: $("parent"),
-  panels: {
-    
-    left: {
-      el: $("left"),
-      min: 100,
-      max: 300
-    },
-    
-    center: {
-      el: $("center"),
-      min: 100,
-      max: 400
-    },
-    
-    right: {
-      el:$("right"),
-      min: 200,
-      max: Infinity
-    }
-    
-  }
-});
