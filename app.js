@@ -7,28 +7,32 @@ var $ = function(id) {
   return document.getElementById(id);
 };
 
-Splitter({
-  
+Splitter.init({
+
+  minWidth: 950,
   parent: $("parent"),
   panels: {
-    
+
     left: {
       el: $("left"),
-      min: 100,
-      max: 300
-    },
-    
-    center: {
-      el: $("center"),
-      min: 100,
+      min: 150,
+      width: 150,
       max: 400
     },
-    
+
+    center: {
+      el: $("center"),
+      min: 250,
+      width: 250,
+      max: 850
+    },
+
     right: {
       el:$("right"),
-      min: 200,
+      min: 550,
+      width: 550,
       max: Infinity
     }
-    
+
   }
 });

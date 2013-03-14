@@ -5,9 +5,10 @@
   "version": "0.1.0",
   "window": {
     "toolbar": true,
-    "width": 800,
+    "width": 950,
     "height": 600,
     "position": "mouse",
-    "frame": true
+    "frame": true,
+    "min_width": 950
   }
 }

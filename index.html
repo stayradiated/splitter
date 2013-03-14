@@ -30,7 +30,6 @@
     .panel {
       background: #ddd;
       position: absolute;
-      width: 50%;
       top: 0;
       bottom: 0;
       overflow: hidden;
@@ -40,18 +39,18 @@
     #left {
       left: 0;
       z-index: 1;
-      width: 200px;
-      /*background: blue;*/
+      width: 150px;
+      background: blue;
     }
     #center {
-      left: 200px;
-      width: 300px;
-      /*background: red;*/
+      left: 150px;
+      width: 250px;
+      background: red;
     }
     #right {
-      left: 500px;
-      width: 100%;
-      /*background: green;*/
+      left: 400px;
+      right: 0;
+      background: green;
     }
     .splitter {
       background: transparent;
@@ -66,28 +65,26 @@
       z-index: 2;
     }
     .split-left {
-      left: 200px;
+      left: 150px;
     }
     .split-right {
-      left: 500px;
+      left: 400px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div id="parent" class="app">
-      <div id="left" class="panel">
-        Min: 100px <br>
-        Max: 300px
-      </div>
-      <div id="center" class="panel">
-        Min: 100px <br>
-        Max: 400px
-      </div>
-      <div id="right" class="panel">
-        Min: 200px <br>
-        Max: infinite
-      </div>
+  <div id="parent" class="app">
+    <div id="left" class="panel">
+      Min: 150px <br>
+      Max: 400px
+    </div>
+    <div id="center" class="panel">
+      Min: 250px <br>
+      Max: 850px
+    </div>
+    <div id="right" class="panel">
+      Min: 550px <br>
+      Max: infinite
     </div>
   </div>
   <script src="./app.js"></script>
