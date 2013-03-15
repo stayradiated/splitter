@@ -10,6 +10,9 @@
       ============
     */
 
+   /* Stop text selection breaking app */
+   body { -webkit-user-select: none; }
+
     /* Set cursor to horizontal resize while resizing */
     body.resizing { cursor: ew-resize; }
 
@@ -95,7 +98,6 @@
     }
     body {
       background: #333;
-      -webkit-user-select: none;
     }
     .panel {
       padding: 20px;
@@ -113,7 +115,7 @@
     .splitter {
       background: transparent;
       border-left: 1px solid #fff;
-      box-shadow: -1px -0 0 #666;
+      box-shadow: -1px 0 #666;
     }
 
   </style>
