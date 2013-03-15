@@ -11,9 +11,7 @@
     */
 
     /* Set cursor to horizontal resize while resizing */
-    body.resizing {
-      cursor: ew-resize;
-    }
+    body.resizing { cursor: ew-resize; }
 
     /* THE PARENT */
     #parent {
@@ -24,11 +22,11 @@
       /* Hides ugly scrollbars */
       overflow: hidden;
 
-      /* Make parent fill up the entire screen*/
+      /* Make parent fill up the entire screen */
       top: 0; bottom: 0;
       left: 0; right: 0;
-    }
 
+    }
 
     /* THE PANELS */
     .panel {
@@ -50,7 +48,7 @@
     /* THE LEFT PANEL */
     #left {
 
-      /* Left panel must be positioned on the left*/
+      /* Left panel must be positioned on the left */
       left: 0;
 
     }
@@ -58,31 +56,37 @@
     /* THE RIGHT PANEL */
     #right {
 
-      /* Keep right panel on the right*/
+      /* Keep right panel on the right */
       right: 0;
 
     }
 
     /* THE SPLITTERS */
     .splitter {
+
       /* So you can easily grab the splitter with a mouse */
       width: 5px;
 
-      /* Must be positioned absolutely*/
+      /* Must be positioned absolutely */
       position: absolute;
 
-      /* Take up full parent height*/
+      /* Take up full parent height */
       top: 0; bottom: 0;
 
-      /* Use resize cursor*/
+      /* Use resize cursor */
       cursor: ew-resize;
 
-      /* So you can see the splitters*/
+      /* So you can see the splitters above the panels */
       z-index: 2;
+
     }
 
 
-    /* EXAMPLE APP STYLES -- OPTIONAL */
+    /*
+      EXAMPLE APP STYLES -- OPTIONAL
+      ==============================
+    */
+
     body {
       color: #333;
       font-family: "Helvetica Neue";
