@@ -126,10 +126,11 @@
       // Left splitter
       else if (this.id === "left") {
         splitters.left.move(pos);
-        splitters.right.move(diff, true);
+        splitters.right.move(pos + panels.center.width);
         panels.left.resize(pos - offset.left);
         panels.center.move(pos);
         panels.right.move(splitters.right.pos);
+        minWidth = pos + panels.center.min + panels.right.min;
       }
 
       // Resize window frame
@@ -221,6 +222,8 @@
         width = parent.offsetWidth;
         var diff = width - last.width;
         if (diff === 0 || width < minWidth) { return false; }
+
+        console.log(diff, width, minWidth)
 
         // If window is shrinking
         if (diff < 0) {
