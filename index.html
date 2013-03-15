@@ -4,72 +4,114 @@
   <meta charset="UTF-8">
   <title>Splitter Demo</title>
   <style>
+
+    /*
+      REQUIRED CSS
+      ============
+    */
+
+    /* Set cursor to horizontal resize while resizing */
+    body.resizing {
+      cursor: ew-resize;
+    }
+
+    /* THE PARENT */
+    #parent {
+
+      /* Must be positioned absolutely */
+      position: absolute;
+
+      /* Hides ugly scrollbars */
+      overflow: hidden;
+
+      /* Make parent fill up the entire screen*/
+      top: 0; bottom: 0;
+      left: 0; right: 0;
+    }
+
+
+    /* THE PANELS */
+    .panel {
+
+      /* Must be position absolutely */
+      position: absolute;
+
+      /* Take up full height of parent */
+      top: 0; bottom: 0;
+
+      /* Stop content breaking out */
+      overflow: hidden;
+
+      /* Prevent padding messing with width */
+      box-sizing: border-box;
+
+    }
+
+    /* THE LEFT PANEL */
+    #left {
+
+      /* Left panel must be positioned on the left*/
+      left: 0;
+
+    }
+
+    /* THE RIGHT PANEL */
+    #right {
+
+      /* Keep right panel on the right*/
+      right: 0;
+
+    }
+
+    /* THE SPLITTERS */
+    .splitter {
+      /* So you can easily grab the splitter with a mouse */
+      width: 5px;
+
+      /* Must be positioned absolutely*/
+      position: absolute;
+
+      /* Take up full parent height*/
+      top: 0; bottom: 0;
+
+      /* Use resize cursor*/
+      cursor: ew-resize;
+
+      /* So you can see the splitters*/
+      z-index: 2;
+    }
+
+
+    /* EXAMPLE APP STYLES -- OPTIONAL */
     body {
       color: #333;
       font-family: "Helvetica Neue";
       font-size: 14px;
       line-height: 21px;
     }
-
-
     body {
       background: #333;
       -webkit-user-select: none;
     }
-    body.dragging {
-      cursor: ew-resize;
-    }
-    .app {
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      position: absolute;
-      overflow: hidden;
-    }
     .panel {
-      background: #ddd;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      overflow: hidden;
       padding: 20px;
-      box-sizing: border-box;
     }
     #left {
-      left: 0;
-      z-index: 1;
-      width: 150px;
-      background: blue;
+      background: #2a2f36;
+      color: #fff;
     }
     #center {
-      left: 150px;
-      width: 250px;
-      background: red;
+      background: #ddd;
     }
     #right {
-      left: 400px;
-      right: 0;
-      background: green;
+      background: #ffffff;
     }
     .splitter {
       background: transparent;
-      border-left: 1px solid #666;
-      box-shadow: -1px -0 0 #fff;
-      width: 5px;
-      position: absolute;
+      border-left: 1px solid #fff;
+      box-shadow: -1px -0 0 #666;
+    }
 
-      top: 0;
-      bottom: 0;
-      cursor: ew-resize;
-      z-index: 2;
-    }
-    .split-left {
-      left: 150px;
-    }
-    .split-right {
-      left: 400px;
-    }
   </style>
 </head>
 <body>

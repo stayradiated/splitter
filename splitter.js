@@ -16,12 +16,28 @@
 
 
   // Class Panel
-  var Panel = function(options) {
+  var Panel = function(id, options) {
+    this.id = id;
     this.el = options.el;
     this.min = options.min || 0;
     this.max = options.max || Infinity;
     this.width = options.width || 0;
-    this.pos = 0;
+
+    switch (this.id) {
+      case "left":
+        this.pos = 0;
+        break;
+      case "center":
+        this.pos = panels.left.width;
+        break;
+      case "right":
+        this.pos = panels.left.width + panels.center.width;
+        break;
+    }
+
+    if (this.id !== "right") { this.el.style.width = this.width + "px"; }
+    this.el.style.left = this.pos + "px";
+
   };
 
   Panel.prototype = {
@@ -56,6 +72,7 @@
     }
 
     this.el.className = "splitter split-" + this.id;
+    this.el.style.left = this.right.pos + "px";
     this.left.el.insertAdjacentElement('afterend', this.el);
     this.pos = this.el.offsetLeft;
     this.el.obj = this;
@@ -175,7 +192,7 @@
         offset.right = splitters.right.pos;
       }
       last.pos = getPos(event.clientX);
-      doc.body.className = "dragging";
+      doc.body.className = "resizing";
     },
 
     mousemove: function(event) {
@@ -188,7 +205,7 @@
     mouseup: function() {
 
       if (mode == "node" && active.id === "left") {
-        win.setMinimumSize(panels.left.width + panels.center.width + panels.right.width, 0);
+        win.setMinimumSize(panels.left.max + panels.center.min + panels.right.min, 0);
       }
 
       doc.body.className = "";
@@ -226,9 +243,9 @@
     parent = options.parent;
 
     // Create Panels
-    panels.left = new Panel(options.panels.left);
-    panels.center = new Panel(options.panels.center);
-    panels.right = new Panel(options.panels.right);
+    panels.left = new Panel("left", options.panels.left);
+    panels.center = new Panel("center", options.panels.center);
+    panels.right = new Panel("right", options.panels.right);
 
     // Create Splitters
     splitters.left = new Splitter("left");
