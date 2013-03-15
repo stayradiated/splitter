@@ -8,18 +8,42 @@
   var width = 0;
   var active = false;
   var offset = {};
+  var minWidth = 0;
   var last = {
     pos: 0,
     width: 0
   };
-  var win;
 
+
+  // Class Panel
   var Panel = function(options) {
-    this.id = options.id;
     this.el = options.el;
     this.min = options.min || 0;
     this.max = options.max || Infinity;
     this.width = options.width || 0;
+    this.pos = 0;
+  };
+
+  Panel.prototype = {
+    move: function(position, relative) {
+      if (relative) { this.pos += position; }
+      else { this.pos = position; }
+      this.el.style.left = this.pos + "px";
+    },
+    resize: function(width, relative) {
+      if (relative) { this.width += width; }
+      else { this.width = width; }
+      if (this.width < this.min) { this.width = this.min; }
+      else if (this.width > this.max) { this.width = this.max; }
+      this.el.style.width = this.width + "px";
+    }
+  };
+
+
+  // Class Splitter
+  var Splitter = function(id) {
+    this.id = id;
+    this.el = doc.createElement("div")
     this.pos = 0;
 
     if (this.id === "left") {
@@ -31,114 +55,100 @@
       this.right = panels.right;
     }
 
+    this.el.className = "splitter split-" + this.id;
+    this.left.el.insertAdjacentElement('afterend', this.el);
+    this.pos = this.el.offsetLeft;
+    this.el.obj = this;
+    this.el.onmousedown = events.mousedown;
+
   };
 
-  Panel.prototype.resize = function(width, relative) {
-    if (relative) { this.width += width; }
-    else { this.width = width; }
-    this.el.style.width = this.width + "px";
-  }
+  Splitter.prototype = {
+    move: Panel.prototype.move,
+    resize: function(pos) {
+      var resizeWindow = true;
 
-  Panel.prototype.move = function(position, relative) {
-    if (relative) { this.pos += position}
-    else { this.pos = position }
-    this.el.style.left = this.pos + "px";
-  }
+      // Left min
+      if (pos < this.left.min + offset.left) {
+        pos = this.left.min + offset.left;
+      }
+
+      // Left max
+      else if (pos > this.left.max + offset.left) {
+        pos = this.left.max + offset.left;
+      }
+
+      if (this.id === "right") {
+        resizeWindow = false;
+
+        // Right min
+        if (offset.right - pos < this.right.min) {
+          resizeWindow = true;
+        }
+
+        // Right max
+        else if (offset.right - pos > this.right.max) {
+          pos = offset.right - this.right.max;
+        }
+      }
+
+      // Calculate diff
+      var diff = pos - last.pos;
+      if (diff === 0) {
+        this.pos = pos;
+        return true;
+      }
+
+      // Right Splitter
+      if (this.id === "right") {
+        panels.center.resize(pos - offset.left);
+        panels.right.move(pos);
+        splitters.right.move(pos);
+      }
+
+      // Left splitter
+      else if (this.id === "left") {
+        splitters.left.move(pos);
+        splitters.right.move(diff, true);
+        panels.left.resize(pos - offset.left);
+        panels.center.move(pos);
+        panels.right.move(splitters.right.pos);
+      }
+
+      // Resize window frame
+      if (mode === "node" && resizeWindow) {
+        width += diff;
+        offset.right = win.width = width;
+      }
+
+      // Save position
+      this.pos = last.pos = pos;
+    }
+  };
 
 
-  // Node-webkit
-  if (typeof(window) !== "undefined") {
-    console.log(global);
-    var gui = global.gui;
-    win = gui.Window.get();
-  }
-  else {
-    win = window;
-  }
-
-  // If used in Node-Webkit, set `global.document = document` in the main js file.
-  var doc;
-  if (typeof(document) !== "undefined") {
+  /*
+    Node Webkit Support
+    -------------------
+    global.document = document
+    global.window = window
+  */
+  var win, doc, mode;
+  if (typeof(process) !== "undefined") {
+    mode = "node";
+    win = global.gui.Window.get();
     doc = global.document;
   }
   else {
+    mode = "browser";
+    win = window;
     doc = document;
   }
-  var body = doc.body;
 
-
-  // Move `splitter` to `pos`
-  var resize = function(splitter, pos) {
-
-    var expandWindow = true;
-
-    // Left min
-    if (pos < splitter.left.min + offset.left) {
-      pos = splitter.left.min + offset.left;
-    }
-
-    // Left max
-    else if (pos > splitter.left.max + offset.left) {
-      pos = splitter.left.max + offset.left;
-    }
-
-    if (splitter.id === "right") {
-
-      expandWindow = false;
-
-      // Right min
-      if (offset.right - pos < splitter.right.min) {
-        expandWindow = true;
-      }
-
-      // Right max
-      else if (offset.right - pos > splitter.right.max) {
-        pos = offset.right - splitter.right.max;
-      }
-    }
-
-    // Calculate diff
-    diff = pos - last.pos;
-    if (diff === 0) {
-      splitter.pos = last.pos = pos;
-      return true;
-    }
-
-    // Right Splitter
-    if (splitter.id === "right") {
-      panels.center.resize(pos-offset.left);
-      panels.right.move(pos);
-      splitters.right.move(pos);
-    }
-
-    // Left splitter
-    else if (splitter.id === "left") {
-
-      // Move splitters
-      splitters.left.move(pos);
-      splitters.right.move(diff, true);
-
-      // Move and resize panels
-      panels.left.resize(pos - offset.left);
-      panels.center.move(pos);
-      panels.right.move(splitters.right.pos);
-    }
-
-    if (expandWindow) {
-      // Resize window frame
-      width +=  diff;
-      win.width = width;
-      offset.right = width;
-    }
-
-    // Save position
-    splitter.pos = last.pos = pos;
-
-  };
 
   // Calculate position of cursor on parent.
-  getPos = function(clientX) {
-    pos = clientX - parentOffset;
+  var getPos = function(clientX) {
+    var pos = clientX - parentOffset;
     if (pos < 0) {
       pos = 0;
     }
@@ -148,10 +158,11 @@
     return pos;
   };
 
-  // Mouse Events
-  var mouse = {
 
-    down: function(event) {
+  // Events
+  var events = {
+
+    mousedown: function(event) {
       active = this.obj;
       offset = {
         left: 0,
@@ -164,95 +175,73 @@
         offset.right = splitters.right.pos;
       }
       last.pos = getPos(event.clientX);
-      body.className = "dragging";
-      down = true;
+      doc.body.className = "dragging";
     },
 
-    move: function(event) {
+    mousemove: function(event) {
       if (active) {
-        pos = getPos(event.clientX);
-        resize(active, pos);
+        var pos = getPos(event.clientX);
+        active.resize(pos);
       }
     },
 
-    up: function() {
-      body.className = "";
+    mouseup: function() {
+
+      if (mode == "node" && active.id === "left") {
+        win.setMinimumSize(panels.left.width + panels.center.width + panels.right.width, 0);
+      }
+
+      doc.body.className = "";
       active = false;
-    }
+    },
 
-  };
-
-  var init = function(options) {
-    parent = options.parent;
-
-    panels.left = new Panel(options.panels.left);
-    panels.center = new Panel(options.panels.center);
-    panels.right = new Panel(options.panels.right);
-
-    minWidth = options.minWidth;
-
-    splitters.left = new Panel({
-      id: "left",
-      el: doc.createElement("div")
-    });
-
-    splitters.right = new Panel({
-      id: "right",
-      el: doc.createElement("div")
-    });
-
-    // Add splitters to DOM
-    splitters.left.el.className = "splitter split-left";
-    splitters.right.el.className = "splitter split-right";
-    panels.left.el.insertAdjacentElement('afterend', splitters.left.el);
-    panels.center.el.insertAdjacentElement('afterend', splitters.right.el);
-
-    // Get initial position from CSS
-    splitters.left.pos = splitters.left.el.offsetLeft;
-    splitters.right.pos = splitters.right.el.offsetLeft;
-
-    // Link splitter objects to elements
-    splitters.left.el.obj = splitters.left;
-    splitters.right.el.obj = splitters.right;
-
-    // Get width of parent
-    width = parent.offsetWidth;
-
-    // Bind events
-    splitters.left.el.onmousedown = mouse.down;
-    splitters.right.el.onmousedown = mouse.down;
-    doc.onmousemove = mouse.move;
-    doc.onmouseup = mouse.up;
-
-    // Adjust splitters on resize
-    window.onresize = function(event) {
+    resize: function() {
 
       // Only run if triggered by user
       if (!active) {
 
+        // Get new width and check if it hase changed
         width = parent.offsetWidth;
-        diff = width - last.width;
+        var diff = width - last.width;
+        if (diff === 0 || width < minWidth) { return false; }
 
-        if (diff !== 0) {
-
-          // Shrinking window
-          if (diff < 0) {
-
-            // Check panels.right for min width
-            if (panels.right.el.offsetWidth <= panels.right.min) {
-
-              panels.center.resize(diff, true);
-              panels.right.move(diff, true);
-              splitters.right.move(diff, true);
-
-            }
-
+        // If window is shrinking
+        if (diff < 0) {
+          // Check right panel for min width
+          if (panels.right.el.offsetWidth <= panels.right.min) {
+            panels.center.resize(diff, true);
+            panels.right.move(diff, true);
+            splitters.right.move(diff, true);
           }
-
-          last.width = width;
         }
+
+        last.width = width;
       }
-    };
+    }
+  };
+
+  var init = function(options) {
+
+    // Get options
+    parent = options.parent;
+
+    // Create Panels
+    panels.left = new Panel(options.panels.left);
+    panels.center = new Panel(options.panels.center);
+    panels.right = new Panel(options.panels.right);
+
+    // Create Splitters
+    splitters.left = new Splitter("left");
+    splitters.right = new Splitter("right");
+
+    // Get width of parent
+    width = parent.offsetWidth;
+    minWidth = panels.left.min + panels.center.min + panels.right.min;
+
+    // Bind events
+    doc.onmousemove = events.mousemove;
+    doc.onmouseup = events.mouseup;
+    window.onresize = events.resize;
 
   };
 
@@ -260,8 +249,7 @@
     init: init,
     panels: panels,
     splitters: splitters
-  }
-
+  };
 
   if (typeof(module) !== "undefined") {
     module.exports = exports;
